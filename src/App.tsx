@@ -136,6 +136,22 @@ function App() {
           <Route path="/viewer" element={<Viewer />} />
         </Routes>
       </main>
+
+      <footer className="w-full py-6 mt-auto border-t border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 transition-colors">
+        <div className="max-w-7xl mx-auto px-4 text-center pb-2">
+          <p className="text-sm font-medium text-slate-500 dark:text-slate-400">
+            Made with <span className="text-red-500 animate-pulse inline-block mx-0.5">❤️</span> by{' '}
+            <a 
+              href="https://furkan.software" 
+              target="_blank" 
+              rel="noopener noreferrer"
+              className="text-indigo-600 dark:text-indigo-400 hover:text-indigo-700 dark:hover:text-indigo-300 font-bold transition-colors underline decoration-2 underline-offset-4 decoration-indigo-200 dark:decoration-indigo-900 hover:decoration-indigo-500 dark:hover:decoration-indigo-400"
+            >
+              Nafair
+            </a>
+          </p>
+        </div>
+      </footer>
     </div>
   );
 }
