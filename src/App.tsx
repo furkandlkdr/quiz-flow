@@ -1,63 +1,139 @@
-import { Routes, Route, Link, useLocation } from 'react-router-dom';
+import { useEffect } from 'react';
+import { Routes, Route, Link, useLocation, Navigate } from 'react-router-dom';
 import QuestionEntry from './views/QuestionEntry';
 import StudentQuiz from './views/StudentQuiz';
-import { Database, GraduationCap, PlayCircle, Settings } from 'lucide-react';
+import Viewer from './views/Viewer';
+import AdminDashboard from './views/AdminDashboard';
+import AdminLogin from './views/AdminLogin';
+import UploadLogin from './views/UploadLogin';
+import { Database, GraduationCap, PlayCircle, BookOpen, Key } from 'lucide-react';
+import { useAuthStore } from './store/useAuthStore';
+import { useThemeStore } from './store/useThemeStore';
+import { useTranslation } from 'react-i18next';
+import ThemeToggle from './components/ThemeToggle';
+import LangToggle from './components/LangToggle';
+
+// Route Guards
+const UploadGuard = ({ children }: { children: React.ReactNode }) => {
+  const { hasPasscode } = useAuthStore();
+  return hasPasscode ? <>{children}</> : <Navigate to="/upload-login" replace />;
+};
 
 function App() {
   const location = useLocation();
+  const { theme } = useThemeStore();
+  const { t } = useTranslation();
+
+  // Handle dark mode global class injection
+  useEffect(() => {
+    const root = window.document.documentElement;
+    root.classList.remove('light', 'dark');
+    if (theme === 'system') {
+      const systemTheme = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+      root.classList.add(systemTheme);
+    } else {
+      root.classList.add(theme);
+    }
+  }, [theme]);
+
+  // Update Dynamic Title
+  useEffect(() => {
+    const map: Record<string, string> = {
+      '/': t('home.title') + ' | QuizFlow',
+      '/solve': t('nav.solveQuiz') + ' | QuizFlow',
+      '/viewer': t('nav.cheatSheet') + ' | QuizFlow',
+      '/admin': t('admin.title') + ' | QuizFlow',
+      '/upload': t('upload.title') + ' | QuizFlow',
+    };
+    document.title = map[location.pathname] || 'QuizFlow';
+  }, [location.pathname, t]);
 
   return (
-    <div className="min-h-screen bg-slate-100 flex flex-col font-sans">
-      <header className="bg-white border-b border-slate-200 sticky top-0 z-10 shadow-sm">
-        <div className="max-w-7xl mx-auto px-4 h-16 flex items-center justify-between">
-          <Link to="/" className="flex items-center gap-3 group">
-            <div className="bg-blue-600 p-2 rounded-xl group-hover:bg-blue-700 transition-colors">
-              <GraduationCap className="w-5 h-5 text-white" />
+    <div className="min-h-screen bg-slate-100 dark:bg-slate-950 flex flex-col font-sans transition-colors duration-200">
+      <header className="bg-white dark:bg-slate-900 border-b border-slate-200 dark:border-slate-800 sticky top-0 z-10 shadow-sm transition-colors duration-200">
+        <div className="max-w-7xl mx-auto px-4 py-2 sm:h-16 flex flex-col sm:flex-row items-center justify-between gap-3 sm:gap-0">
+          <div className="flex items-center justify-between w-full sm:w-auto">
+            <Link to="/" className="flex items-center gap-3 group">
+              <div className="bg-blue-600 dark:bg-blue-500 p-2 rounded-xl group-hover:bg-blue-700 dark:group-hover:bg-blue-600 transition-colors">
+                <GraduationCap className="w-5 h-5 text-white" />
+              </div>
+              <h1 className="text-xl font-bold text-slate-800 dark:text-white tracking-tight">QuizFlow</h1>
+            </Link>
+            
+            <div className="sm:hidden flex items-center gap-2">
+               <LangToggle />
+               <ThemeToggle />
             </div>
-            <h1 className="text-xl font-bold text-slate-800 tracking-tight">QuizMaster</h1>
-          </Link>
-
-          <nav className="flex gap-2">
-            <Link
-              to="/solve"
-              className={`px-3 py-2 text-sm font-medium rounded-lg transition-colors flex items-center gap-2 ${location.pathname === '/solve' ? 'bg-blue-50 text-blue-700' : 'text-slate-600 hover:text-slate-900 hover:bg-slate-50'}`}
+          </div>
+          
+          <nav className="flex gap-1 sm:gap-2 overflow-x-auto items-center w-full sm:w-auto pb-1 sm:pb-0 scrollbar-hide">
+            <Link 
+              to="/viewer" 
+              className={`px-3 py-2 text-sm font-medium rounded-lg transition-colors flex items-center gap-2 whitespace-nowrap ${location.pathname === '/viewer' ? 'bg-emerald-50 dark:bg-emerald-900/30 text-emerald-700 dark:text-emerald-400' : 'text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white hover:bg-slate-50 dark:hover:bg-slate-800'}`}
+            >
+              <BookOpen className="w-4 h-4" />
+              <span className="hidden sm:inline">{t('nav.cheatSheet')}</span>
+            </Link>
+            <Link 
+              to="/solve" 
+              className={`px-3 py-2 text-sm font-medium rounded-lg transition-colors flex items-center gap-2 whitespace-nowrap ${location.pathname === '/solve' ? 'bg-blue-50 dark:bg-blue-900/30 text-blue-700 dark:text-blue-400' : 'text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white hover:bg-slate-50 dark:hover:bg-slate-800'}`}
             >
               <PlayCircle className="w-4 h-4" />
-              Solve Quiz
+              <span className="hidden sm:inline">{t('nav.solveQuiz')}</span>
             </Link>
-            <Link
-              to="/admin"
-              className={`px-3 py-2 text-sm font-medium rounded-lg transition-colors flex items-center gap-2 ${location.pathname === '/admin' ? 'bg-indigo-50 text-indigo-700' : 'text-slate-600 hover:text-slate-900 hover:bg-slate-50'}`}
+            <Link 
+              to="/upload" 
+              className={`px-3 py-2 text-sm font-medium rounded-lg transition-colors flex items-center gap-2 whitespace-nowrap ${(location.pathname === '/upload' || location.pathname === '/upload-login') ? 'bg-amber-50 dark:bg-amber-900/30 text-amber-700 dark:text-amber-400' : 'text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white hover:bg-slate-50 dark:hover:bg-slate-800'}`}
+            >
+              <Key className="w-4 h-4" />
+              <span className="hidden sm:inline">{t('nav.editorUpload')}</span>
+            </Link>
+            <Link 
+              to="/admin" 
+              className={`px-3 py-2 text-sm font-medium rounded-lg transition-colors flex items-center gap-2 whitespace-nowrap ${(location.pathname === '/admin' || location.pathname === '/login') ? 'bg-indigo-50 dark:bg-indigo-900/30 text-indigo-700 dark:text-indigo-400' : 'text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white hover:bg-slate-50 dark:hover:bg-slate-800'}`}
             >
               <Database className="w-4 h-4" />
-              Manage Questions
+              <span className="hidden sm:inline">{t('nav.admin')}</span>
             </Link>
-            <button className="px-3 py-2 text-sm font-medium text-slate-600 hover:text-slate-900 hover:bg-slate-50 rounded-lg transition-colors flex items-center gap-2">
-              <Settings className="w-4 h-4" />
-              Settings
-            </button>
+
+            <div className="hidden sm:flex items-center gap-2 ml-2 pl-2 border-l border-slate-200 dark:border-slate-700">
+               <LangToggle />
+               <ThemeToggle />
+            </div>
           </nav>
         </div>
       </header>
-
-      <main className="flex-1 py-8">
+      
+      <main className="flex-1 py-4 sm:py-8">
         <Routes>
           <Route path="/" element={
-            <div className="text-center mt-20 fade-in animate-in duration-500">
-              <h2 className="text-3xl font-bold text-slate-800 mb-4">Welcome to QuizMaster</h2>
-              <p className="text-slate-600 mb-8 max-w-xl mx-auto">Create robust tests securely and solve them with integrated recursive learning loops.</p>
-              <div className="flex gap-4 justify-center">
-                <Link to="/solve" className="bg-blue-600 text-white px-6 py-3 rounded-xl font-semibold shadow hover:bg-blue-700 flex items-center gap-2">
-                  <PlayCircle className="w-5 h-5" /> Start Learning
+            <div className="text-center mt-12 sm:mt-20 fade-in animate-in duration-500 px-4">
+              <h2 className="text-3xl sm:text-4xl font-bold text-slate-800 dark:text-white mb-4 tracking-tight">{t('home.title')}</h2>
+              <p className="text-slate-600 dark:text-slate-400 mb-8 max-w-xl mx-auto leading-relaxed">
+                {t('home.subtitle')}
+              </p>
+              <div className="flex flex-col sm:flex-row gap-4 justify-center">
+                <Link to="/solve" className="bg-blue-600 text-white px-6 py-3 rounded-xl font-semibold shadow hover:bg-blue-700 flex justify-center items-center gap-2 transition">
+                  <PlayCircle className="w-5 h-5" /> {t('home.startLearning')}
                 </Link>
-                <Link to="/admin" className="bg-white text-slate-700 border border-slate-200 px-6 py-3 rounded-xl font-semibold shadow-sm hover:bg-slate-50 flex items-center gap-2">
-                  <Database className="w-5 h-5" /> Manage Content
+                <Link to="/viewer" className="bg-white dark:bg-slate-800 text-emerald-600 dark:text-emerald-400 border border-emerald-200 dark:border-emerald-800 px-6 py-3 rounded-xl font-semibold shadow-sm hover:bg-emerald-50 dark:hover:bg-emerald-900/20 flex justify-center items-center gap-2 transition">
+                  <BookOpen className="w-5 h-5" /> {t('home.browseCheatSheet')}
                 </Link>
               </div>
             </div>
           } />
-          <Route path="/admin" element={<QuestionEntry />} />
+
+          {/* Secure Routes */}
+          <Route path="/admin" element={<AdminDashboard />} />
+          <Route path="/login" element={<AdminLogin />} />
+          
+          {/* Passcode Routes */}
+          <Route path="/upload" element={<UploadGuard><QuestionEntry /></UploadGuard>} />
+          <Route path="/upload-login" element={<UploadLogin />} />
+
+          {/* Public Routes */}
           <Route path="/solve" element={<StudentQuiz />} />
+          <Route path="/viewer" element={<Viewer />} />
         </Routes>
       </main>
     </div>
