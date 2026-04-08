@@ -51,7 +51,7 @@ const resources = {
       upload: {
         title: "Bulk Question Entry",
         subtitle: "Paste your raw question text below. The system will detect questions and options. Ensure you have exactly 10 questions to proceed, and select the correct answer for each.",
-        selectTopic: "Select Topic",
+        selectTopic: "Enter your topic",
         placeholder: "eg:\n1) What is React?\nA) Library\nB) Framework",
         xParsed: "{{count}} / 10 Questions Parsed",
         modifyText: "You currently have {{count}} questions recognized. Please modify your text so exactly 10 questions are extracted.",
@@ -141,7 +141,7 @@ const resources = {
       upload: {
         title: "Toplu Soru Girişi",
         subtitle: "Soru metnini aşağıya yapıştırın. Sistem soruları ve şıkları algılayacaktır. Devam etmek için tam 10 soru olduğundan emin olun ve her biri için doğru cevabı seçin.",
-        selectTopic: "Konu Seç",
+        selectTopic: "Konunuzu girin",
         placeholder: "örn:\n1) React nedir?\nA) Kütüphane\nB) Framework",
         xParsed: "{{count}} / 10 Soru Algılandı",
         modifyText: "Şu anda {{count}} soru algılandı. Lütfen tam 10 soru olacak şekilde metni düzenleyin.",

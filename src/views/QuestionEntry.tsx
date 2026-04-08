@@ -59,15 +59,13 @@ export default function QuestionEntry() {
             <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">
               {t('upload.selectTopic')}
             </label>
-            <select 
+            <input 
+              type="text"
               value={topic}
               onChange={(e) => setTopic(e.target.value)}
-              className="w-full md:w-1/3 rounded-lg border-slate-300 dark:border-slate-700 bg-transparent dark:text-white p-2 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-colors"
-            >
-              {['General', 'Geography', 'Mathematics', 'Science', 'History', 'Technology'].map(tOption => (
-                <option key={tOption} value={tOption}>{tOption}</option>
-              ))}
-            </select>
+              className="w-full md:w-1/3 rounded-lg border-slate-300 dark:border-slate-700 bg-transparent dark:text-white p-2 border focus:ring-2 focus:ring-blue-500 outline-none transition-colors placeholder:text-slate-400 dark:placeholder:text-slate-500"
+              placeholder={t('upload.selectTopic')}
+            />
           </div>
 
           <textarea
