@@ -1,0 +1,21 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>QuizFlow</title>
+    <script>
+      (function () {
+        var path = window.location.pathname;
+        var basePath = path.replace(/\/[^/]*$/, '/');
+        var routePath = '/' + path.slice(basePath.length);
+        if (routePath === '//') {
+          routePath = '/';
+        }
+        var target = basePath + '#' + routePath + window.location.search + window.location.hash;
+        window.location.replace(target);
+      })();
+    </script>
+  </head>
+  <body></body>
+</html>
