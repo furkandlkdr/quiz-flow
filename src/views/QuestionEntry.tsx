@@ -1,22 +1,35 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { FileText, CheckCircle, AlertCircle, Save, Loader2 } from 'lucide-react';
 import { useQuizStore } from '../store/useQuizStore';
 import { parseQuestions } from '../features/parser/QuestionParser';
 import { saveQuestionsBatch } from '../api/firestoreService';
 import { useTranslation } from 'react-i18next';
+import { getDefaultTopicLabel } from '../utils/topic';
 
 export default function QuestionEntry() {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
   const { rawText, setRawText, parsedQuestions, setParsedQuestions, setCorrectAnswer, clearParser } = useQuizStore();
-  const [topic, setTopic] = useState('General');
+  const [topic, setTopic] = useState(() => getDefaultTopicLabel(i18n.language));
   const [isSaving, setIsSaving] = useState(false);
   const [saveSuccess, setSaveSuccess] = useState(false);
+  const previousLanguage = useRef(i18n.language);
 
   useEffect(() => {
     const parsed = parseQuestions(rawText);
     setParsedQuestions(parsed);
     setSaveSuccess(false);
   }, [rawText, setParsedQuestions]);
+
+  useEffect(() => {
+    const previousDefault = getDefaultTopicLabel(previousLanguage.current);
+    const nextDefault = getDefaultTopicLabel(i18n.language);
+
+    if (!topic.trim() || topic === previousDefault) {
+      setTopic(nextDefault);
+    }
+
+    previousLanguage.current = i18n.language;
+  }, [i18n.language, topic]);
 
   const isValidLength = parsedQuestions.length === 10;
   // Check if every parsed question has a correct answer assigned
@@ -29,7 +42,7 @@ export default function QuestionEntry() {
     setIsSaving(true);
     try {
       // Append topic right before saving
-      const finalQuestions = parsedQuestions.map(q => ({ ...q, topic }));
+      const finalQuestions = parsedQuestions.map(q => ({ ...q, topic: topic.trim() || getDefaultTopicLabel(i18n.language) }));
       await saveQuestionsBatch(finalQuestions);
       setSaveSuccess(true);
       clearParser();
@@ -63,8 +76,8 @@ export default function QuestionEntry() {
               type="text"
               value={topic}
               onChange={(e) => setTopic(e.target.value)}
-              className="w-full md:w-1/3 rounded-lg border-slate-300 dark:border-slate-700 bg-transparent dark:text-white p-2 border focus:ring-2 focus:ring-blue-500 outline-none transition-colors placeholder:text-slate-400 dark:placeholder:text-slate-500"
-              placeholder={t('upload.selectTopic')}
+              className="w-full md:w-1/2 lg:w-1/3 rounded-lg border-slate-300 dark:border-slate-700 bg-transparent dark:text-white p-2 border focus:ring-2 focus:ring-blue-500 outline-none transition-colors placeholder:text-slate-400 dark:placeholder:text-slate-500"
+              placeholder={t('common.defaultTopic')}
             />
           </div>
 

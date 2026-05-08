@@ -12,8 +12,9 @@
 1. **Smart RegExp Question Parser:** Paste a massive block of raw text. The engine dynamically hunts down structures like `1) `, `2.`, `A)`, `b.` and automatically extracts and builds perfectly typed valid question schemas out of thin air.
 2. **Recursive Mastery Engine:** After taking a test, if you make any mistakes, the application strips out everything you understand and **restarts the loop** exclusively with the exact questions you got wrong. This continues until your knowledge gaps are completely eradicated.
 3. **Admin CMS Panel:** A secure Dashboard with full CRUD capabilities over the Firestore Database. Instantly tweak question text, edit options, change the correct answer, or delete records.
-4. **Offline Resilience (Zustand Persist):** Even if the user refreshes the page mid-quiz, their progress, active questions, and tracking data remains identical.
-5. **Modern Stack & UI:** Beautiful, system-responsive Dark Mode, fully localized interfaces (TR/EN), and high-level routing protections.
+4. **Question Export Workflow:** Select any set of questions in the Admin panel and export them as a Word-ready copy block, a two-column `.docx`, or a plain `.md` file. Export text follows the active language of the interface.
+5. **Offline Resilience (Zustand Persist):** Even if the user refreshes the page mid-quiz, their progress, active questions, and tracking data remains identical.
+6. **Modern Stack & UI:** Beautiful, system-responsive Dark Mode, fully localized interfaces (TR/EN), and high-level routing protections.
 
 ---
 
@@ -67,6 +68,7 @@ Upload the `/dist` folder directly to GitHub Pages, or hook it to a continuous d
 * **Viewer (Cheat Sheet):** A completely public page where all verified questions in your database are viewable. Use the Search or Topic Input filters to quickly scan for subject material.
 * **Editor Upload:** A loosely protected gateway (uses the `VITE_UPLOAD_PASS` passcode) for anyone you trust to bulk upload questions. Paste 10 questions, define a topic, assign correct answers via the radio buttons, and push them natively to your Firestore pool!
 * **Admin Dashboard:** Strictly locked by your Firebase Email & Password. This is your personal mission control to edit bad typos, fix incorrect logic, or manually delete questions from the active pool.
+* **Question Export:** In the Admin Dashboard, select any number of questions and export them directly. Use the copy option for Word paste-ready text, generate a two-column `.docx`, or download a `.md` file. The exported labels and final answer section follow the current UI language.
 * **Solve Quiz:** The main loop. It recursively ensures a user knows every single answer before letting them finish the cycle.
 
 ---
@@ -82,8 +84,9 @@ Upload the `/dist` folder directly to GitHub Pages, or hook it to a continuous d
 1. **Akıllı Soru Derleyicisi:** Koca bir metin yığınını kopyalayıp yapıştırın. Sistem; `1)`, `2.`, `A)`, `b.` gibi kalıpları eşzamanlı avlayıp, bu kaotik yazıları tamamen düzenli JSON soru objelerine çevirir.
 2. **Tekrarlı Ustalaşma (Learning Loop):** Öğrenci testi bitirdiğinde hatalar yaptıysa, sistem doğru bilinen soruları kenara atar ve sadece yanlış yapılan sorularla yeni bir döngü başlatır! Hiçbir eksik bilgi kalmayana kadar testi bitiremezsiniz.
 3. **Yönetici CMS Paneli:** Veritabanına ait sınırları genişletilmiş tam CRUD (Ekle/Değiştir/Sil) paneli. Canlı yayındaki bir soruyu anında düzenleyebilir, konusunu değiştirebilir veya yanlış yazılmış bir cevabı düzeltebilirsiniz.
-4. **Çevrimdışı Bellek (Zustand):** Sayfa yanlışlıkla yenilense dahi sistem `localStorage` yapısını kullandığı için ne testiniz kapanır, ne de girdiğiniz cevaplar silinir. Kaldığınız sorudan devam edersiniz.
-5. **Modern UI & İşletim Sistemi Uyumu:** Otomatik olarak telefonunuzun Koyu Mod (Dark Mode) algısını algılar ve anında Türkçe / İngilizce geçişlerine izin verir.
+4. **Soru Dışarı Aktarma:** Admin panelinden istediğiniz soruları seçerek Word'e yapıştırılmaya hazır, iki sütunlu `.docx` formatında veya `.md` formatında çıktı alabilirsiniz. Çıktı dili, arayüzün dili ile ayarlanır.
+5. **Çevrimdışı Bellek (Zustand):** Sayfa yanlışlıkla yenilense dahi sistem `localStorage` yapısını kullandığı için ne testiniz kapanır, ne de girdiğiniz cevaplar silinir. Kaldığınız sorudan devam edersiniz.
+6. **Modern UI & İşletim Sistemi Uyumu:** Otomatik olarak telefonunuzun Koyu Mod (Dark Mode) algısını algılar ve anında Türkçe / İngilizce geçişlerine izin verir.
 
 ---
 
@@ -137,6 +140,7 @@ Bu komut sonrası oluşan `/dist` klasörünü Github Pages üzerine yükleyip h
 * **Cevap Anahtarı (Viewer):** Herkese açık olan, onaylanıp havuza gönderilmiş tüm soruların indekslendiği kısımdır. İstediğiniz bir konuyu seçerek tüm içeriği direkt görebilirsiniz.
 * **Soru Yükleme (Editor Upload):** Basit bir şifre protokolü arkasına gizlenmiştir (`.env` dosyasından belirlediğiniz şifre geçerlidir). Test yapısını bozmadan, buraya 10 soru yapıştırıp, cevap anahtarını atayıp saniyeler içinde havuza atabilirsiniz!
 * **Yönetici Paneli (Admin):** Mutfaktır. Buraya yalnızca Firebase Ana E-Posta ve Şifreniz ile ulaşabilirsiniz. Yanlış girilmiş her metni buradan düzeltebilir, havuzdaki çürük soruları silebilirsiniz.
+* **Soru Dışa Aktarma:** Yönetici Panelinde istediğiniz kadar soruyu seçip doğrudan dışa aktarabilirsiniz. Word'e yapıştırmaya hazır metin oluşturabilir, iki sütunlu `.docx` indirebilir veya `.md` dosyası alabilirsiniz. Çıktıdaki etiketler ve cevap bölümü aktif arayüz diliyle uyumludur.
 * **Testi Çöz (Solve):** Rastgele 25 içerik çeken ve yanlış yapılanların listesini alıp sürekli bir döngüde kişiye aynı doğruları unutturmamacasına soran zeka bazlı test sayfamız. 
 
 ---

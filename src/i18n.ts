@@ -22,6 +22,7 @@ const resources = {
         search: "Search text...",
         all: "All",
         general: "General",
+        defaultTopic: "Chapter 1 - Chapter Name",
         signOut: "Sign Out",
         cancel: "Cancel",
         save: "Save"
@@ -77,7 +78,13 @@ const resources = {
         deleteConfirm: "Are you sure you want to delete this specific question?",
         editQuestion: "Edit Question",
         editPlaceholder: "Question Text...",
-        updateButton: "Update Question"
+        updateButton: "Update Question",
+        selectedCount: "{{count}} selected",
+        selectThenExport: "Select questions, then export them",
+        copyForWord: "Copy for Word",
+        exportDocx: "Export .docx (2 columns)",
+        exportMd: "Export .md",
+        copySuccess: "Copied. You can paste it into Word."
       },
       login: {
         restricted: "Restricted Access",
@@ -112,6 +119,7 @@ const resources = {
         search: "Metin ara...",
         all: "Tümü",
         general: "Genel",
+        defaultTopic: "Kısım 1 - Kısım Adı",
         signOut: "Çıkış Yap",
         cancel: "İptal",
         save: "Kaydet"
@@ -167,7 +175,13 @@ const resources = {
         deleteConfirm: "Bu soruyu silmek istediğinize emin misiniz?",
         editQuestion: "Soruyu Düzenle",
         editPlaceholder: "Soru Metni...",
-        updateButton: "Soruyu Güncelle"
+        updateButton: "Soruyu Güncelle",
+        selectedCount: "{{count}} soru seçildi",
+        selectThenExport: "Soruları seçin, sonra dışa aktarın",
+        copyForWord: "Word için kopyala",
+        exportDocx: ".docx olarak dışa aktar (2 sütun)",
+        exportMd: ".md olarak dışa aktar",
+        copySuccess: "Kopyalandı. Word içine yapıştırabilirsiniz."
       },
       login: {
         restricted: "Kısıtlı Erişim",

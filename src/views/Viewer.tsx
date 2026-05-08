@@ -3,9 +3,10 @@ import { BookOpen, Filter, Search, Loader2 } from 'lucide-react';
 import { getAllQuestions } from '../api/firestoreService';
 import type { Question } from '../features/parser/QuestionParser';
 import { useTranslation } from 'react-i18next';
+import { getDefaultTopicLabel } from '../utils/topic';
 
 export default function Viewer() {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
   const [questions, setQuestions] = useState<Question[]>([]);
   const [loading, setLoading] = useState(true);
   const [filterTopic, setFilterTopic] = useState('All');
@@ -26,7 +27,7 @@ export default function Viewer() {
     fetchQuestions();
   }, []);
 
-  const topics = ['All', ...Array.from(new Set(questions.map(q => q.topic || 'General')))];
+  const topics = ['All', ...Array.from(new Set(questions.map(q => q.topic || getDefaultTopicLabel(i18n.language))))];
 
   const filtered = questions.filter(q => {
     const matchTopic = filterTopic === 'All' || q.topic === filterTopic;
@@ -63,7 +64,7 @@ export default function Viewer() {
               onChange={(e) => setFilterTopic(e.target.value)}
               className="pl-9 pr-8 py-2 w-full sm:w-40 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl focus:ring-2 focus:ring-emerald-500 outline-none text-sm appearance-none dark:text-white"
             >
-              {topics.map(tOption => <option key={tOption} value={tOption}>{tOption === 'All' ? t('common.all') : (tOption === 'General' ? t('common.general') : tOption)}</option>)}
+              {topics.map(tOption => <option key={tOption} value={tOption}>{tOption === 'All' ? t('common.all') : tOption}</option>)}
             </select>
           </div>
         </div>
@@ -107,7 +108,7 @@ export default function Viewer() {
                  <div className="md:w-48 bg-slate-50 dark:bg-slate-800/50 rounded-xl border border-slate-200 dark:border-slate-700 p-4 flex flex-col justify-center items-center text-center gap-2">
                     <span className="text-xs uppercase tracking-wider font-bold text-slate-400 dark:text-slate-500">{t('viewer.correctAnswer')}</span>
                     <span className="text-3xl sm:text-4xl font-black text-emerald-500">{q.correctAnswer}</span>
-                    <span className="text-xs font-medium text-slate-500 dark:text-slate-400 mt-2 bg-slate-200 dark:bg-slate-700 px-2 py-1 rounded-full">{q.topic || 'General'}</span>
+                      <span className="text-xs font-medium text-slate-500 dark:text-slate-400 mt-2 bg-slate-200 dark:bg-slate-700 px-2 py-1 rounded-full">{q.topic || getDefaultTopicLabel(i18n.language)}</span>
                  </div>
               </div>
             ))
