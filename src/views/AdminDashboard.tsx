@@ -103,15 +103,13 @@ export default function AdminDashboard() {
           ) : (
              <div>
                {/* Export toolbar - shown when at least one question selected */}
-               <div className="flex flex-col gap-3 mb-4 px-2 sm:px-3">
-                 <div className="flex items-center justify-between gap-3">
-                   {selectedIds.length > 0 ? (
-                     <span className="text-sm text-slate-600 dark:text-slate-300 whitespace-nowrap">{t('admin.selectedCount', { count: selectedIds.length })}</span>
-                   ) : (
-                     <span className="text-sm text-slate-500 dark:text-slate-400 whitespace-nowrap">{t('admin.selectThenExport')}</span>
-                   )}
-                 </div>
-                 <div className="flex flex-col sm:flex-row gap-2 sm:items-center">
+               <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 mb-4 px-2 sm:px-3">
+                 {selectedIds.length > 0 ? (
+                   <span className="text-sm text-slate-600 dark:text-slate-300 whitespace-nowrap">{t('admin.selectedCount', { count: selectedIds.length })}</span>
+                 ) : (
+                   <span className="text-sm text-slate-500 dark:text-slate-400 whitespace-nowrap">{t('admin.selectThenExport')}</span>
+                 )}
+                 <div className="flex flex-col sm:flex-row gap-2 w-full sm:w-auto sm:items-center sm:justify-end">
                    <button disabled={selectedIds.length === 0} onClick={async () => { const sel = questions.filter(q => selectedIds.includes(q.id!)); await copyToClipboardPlainText(sel, i18n.language); alert(t('admin.copySuccess')); }} className="w-full sm:w-auto px-3 py-2 text-sm bg-slate-100 dark:bg-slate-800 rounded-md hover:bg-slate-200 disabled:opacity-50">
                     {t('admin.copyForWord')}
                    </button>
