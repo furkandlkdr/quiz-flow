@@ -1,5 +1,5 @@
 import { saveAs } from 'file-saver';
-import { Document, Packer, Paragraph, TextRun, Table, TableRow, TableCell, WidthType } from 'docx';
+import { Document, Packer, Paragraph, TextRun, Table, TableRow, TableCell, WidthType, TableLayoutType, PageOrientation } from 'docx';
 import type { Question } from '../parser/QuestionParser';
 
 export function generatePlainTextForWord(questions: Question[], lang = 'en'): string {
@@ -36,31 +36,45 @@ export async function exportQuestionsDocx(questions: Question[], lang = 'en') {
     const right = questions[i + 1];
 
     const makeCell = (q?: Question, idx?: number) => {
-      if (!q) return new TableCell({ children: [new Paragraph('')] });
+      if (!q) {
+        return new TableCell({
+          width: { size: 50, type: WidthType.PERCENTAGE },
+          children: [new Paragraph('')],
+        });
+      }
 
       const children: Paragraph[] = [];
-      children.push(new Paragraph({ children: [new TextRun({ text: `${(idx ?? 0) + 1}) ${q.text}` })] }));
+      children.push(new Paragraph({ children: [new TextRun({ text: `${(idx ?? 0) + 1}) ${q.text}`, bold: true })] }));
       children.push(new Paragraph(''));
       q.options.forEach(opt => {
         children.push(new Paragraph({ children: [new TextRun({ text: `${opt.id}) `, bold: true }), new TextRun({ text: opt.text })] }));
       });
 
-      return new TableCell({ children });
+      return new TableCell({
+        width: { size: 50, type: WidthType.PERCENTAGE },
+        children,
+      });
     };
 
-    rows.push(new TableRow({ children: [makeCell(left, i), makeCell(right, i + 1)] }));
+    rows.push(new TableRow({ cantSplit: true, children: [makeCell(left, i), makeCell(right, i + 1)] }));
   }
 
   const table = new Table({
     rows,
-    width: { size: 100, type: WidthType.PERCENTAGE }
+    width: { size: 100, type: WidthType.PERCENTAGE },
+    layout: TableLayoutType.FIXED,
   });
 
   const answersLabel = lang.startsWith('tr') ? 'Cevaplar:' : 'Answers:';
   const doc = new Document({
     sections: [
       {
-        properties: {},
+        properties: {
+          page: {
+            size: { orientation: PageOrientation.LANDSCAPE },
+            margin: { top: 720, right: 720, bottom: 720, left: 720 },
+          },
+        },
         children: [
           table,
           new Paragraph(''),
