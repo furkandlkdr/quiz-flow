@@ -1,5 +1,5 @@
 import { saveAs } from 'file-saver';
-import { Document, Packer, Paragraph, TextRun, Table, TableRow, TableCell, WidthType, TableLayoutType, PageOrientation } from 'docx';
+import { AlignmentType, Document, Packer, Paragraph, Table, TableCell, TableLayoutType, TableRow, TextRun, PageOrientation, WidthType } from 'docx';
 import type { Question } from '../parser/QuestionParser';
 
 export function generatePlainTextForWord(questions: Question[], lang = 'en'): string {
@@ -29,59 +29,102 @@ export function downloadMarkdownFile(questions: Question[], lang = 'en') {
 }
 
 export async function exportQuestionsDocx(questions: Question[], lang = 'en') {
-  const rows: TableRow[] = [];
+  const pageWidth = 16838;
+  const pageHeight = 11906;
+  const pageMargin = 720;
+  const cellMargins = {
+    marginUnitType: WidthType.DXA,
+    top: 180,
+    bottom: 180,
+    left: 240,
+    right: 240,
+  };
 
-  for (let i = 0; i < questions.length; i += 2) {
-    const left = questions[i];
-    const right = questions[i + 1];
+  const makeQuestionCell = (q?: Question, idx?: number) => {
+    const children: Paragraph[] = [];
 
-    const makeCell = (q?: Question, idx?: number) => {
-      if (!q) {
-        return new TableCell({
-          width: { size: 50, type: WidthType.PERCENTAGE },
-          children: [new Paragraph('')],
-        });
-      }
+    if (q) {
+      children.push(
+        new Paragraph({
+          keepNext: true,
+          spacing: { before: 0, after: 120 },
+          children: [
+            new TextRun({ text: `${(idx ?? 0) + 1}) `, bold: true }),
+            new TextRun({ text: q.text }),
+          ],
+        })
+      );
 
-      const children: Paragraph[] = [];
-      children.push(new Paragraph({ children: [new TextRun({ text: `${(idx ?? 0) + 1}) ${q.text}`, bold: true })] }));
+      q.options.forEach((opt, optIndex) => {
+        children.push(
+          new Paragraph({
+            keepNext: optIndex < q.options.length - 1,
+            spacing: { before: 0, after: optIndex < q.options.length - 1 ? 40 : 120 },
+            indent: { left: 480 },
+            children: [
+              new TextRun({ text: `${opt.id}) `, bold: true }),
+              new TextRun({ text: opt.text }),
+            ],
+          })
+        );
+      });
+    } else {
       children.push(new Paragraph(''));
-      q.options.forEach(opt => {
-        children.push(new Paragraph({ children: [new TextRun({ text: `${opt.id}) `, bold: true }), new TextRun({ text: opt.text })] }));
-      });
+    }
 
-      return new TableCell({
-        width: { size: 50, type: WidthType.PERCENTAGE },
-        children,
-      });
-    };
+    return new TableCell({
+      margins: cellMargins,
+      children,
+    });
+  };
 
-    rows.push(new TableRow({ cantSplit: true, children: [makeCell(left, i), makeCell(right, i + 1)] }));
+  const rows: TableRow[] = [];
+  for (let i = 0; i < questions.length; i += 2) {
+    rows.push(new TableRow({
+      cantSplit: true,
+      children: [makeQuestionCell(questions[i], i), makeQuestionCell(questions[i + 1], i + 1)],
+    }));
   }
 
-  const table = new Table({
+  const questionTable = new Table({
     rows,
     width: { size: 100, type: WidthType.PERCENTAGE },
-    layout: TableLayoutType.FIXED,
+    layout: TableLayoutType.AUTOFIT,
   });
 
-  const answersLabel = lang.startsWith('tr') ? 'Cevaplar:' : 'Answers:';
+  const answerBlocks: Paragraph[] = [
+    new Paragraph({
+      spacing: { before: 0, after: 240 },
+      alignment: AlignmentType.CENTER,
+      children: [new TextRun({ text: lang.startsWith('tr') ? 'Cevaplar' : 'Answers', bold: true })],
+    }),
+    ...questions.map((q, idx) => new Paragraph({
+      spacing: { before: 0, after: 80 },
+      children: [new TextRun({ text: `${idx + 1}) `, bold: true }), new TextRun({ text: q.correctAnswer || '' })],
+    })),
+  ];
+
   const doc = new Document({
     sections: [
       {
         properties: {
           page: {
-            size: { orientation: PageOrientation.LANDSCAPE },
-            margin: { top: 720, right: 720, bottom: 720, left: 720 },
+            size: { width: pageWidth, height: pageHeight, orientation: PageOrientation.LANDSCAPE },
+            margin: { top: pageMargin, right: pageMargin, bottom: pageMargin, left: pageMargin },
           },
         },
-        children: [
-          table,
-          new Paragraph(''),
-          new Paragraph(answersLabel),
-          ...questions.map((q, idx) => new Paragraph({ children: [new TextRun({ text: `${idx + 1}) ${q.correctAnswer || ''}` })] }))
-        ]
-      }
+        children: [questionTable],
+      },
+      {
+        properties: {
+          type: 'nextPage',
+          page: {
+            size: { width: pageWidth, height: pageHeight, orientation: PageOrientation.LANDSCAPE },
+            margin: { top: pageMargin, right: pageMargin, bottom: pageMargin, left: pageMargin },
+          },
+        },
+        children: answerBlocks,
+      },
     ]
   });
 
