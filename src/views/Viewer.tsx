@@ -4,6 +4,7 @@ import { getAllQuestions } from '../api/firestoreService';
 import type { Question } from '../features/parser/QuestionParser';
 import { useTranslation } from 'react-i18next';
 import { getDefaultTopicLabel } from '../utils/topic';
+import { sortQuestionsAlphabetically, sortStringsAlphabetically } from '../utils/questionSort';
 
 export default function Viewer() {
   const { t, i18n } = useTranslation();
@@ -27,9 +28,10 @@ export default function Viewer() {
     fetchQuestions();
   }, []);
 
-  const topics = ['All', ...Array.from(new Set(questions.map(q => q.topic || getDefaultTopicLabel(i18n.language))))];
+  const sortedQuestions = sortQuestionsAlphabetically(questions);
+  const topics = ['All', ...sortStringsAlphabetically(Array.from(new Set(sortedQuestions.map(q => q.topic || getDefaultTopicLabel(i18n.language)))))];
 
-  const filtered = questions.filter(q => {
+  const filtered = sortedQuestions.filter(q => {
     const matchTopic = filterTopic === 'All' || q.topic === filterTopic;
     const matchSearch = q.text.toLowerCase().includes(searchQuery.toLowerCase());
     return matchTopic && matchSearch;

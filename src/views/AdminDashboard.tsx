@@ -9,6 +9,7 @@ import { logoutAdmin } from '../api/authService';
 import { Navigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { getDefaultTopicLabel } from '../utils/topic';
+import { sortQuestionsAlphabetically } from '../utils/questionSort';
 
 export default function AdminDashboard() {
   const { t, i18n } = useTranslation();
@@ -22,6 +23,7 @@ export default function AdminDashboard() {
   const [selectedIds, setSelectedIds] = useState<string[]>([]);
   
   const { isAdmin, loading: authLoading } = useAuthStore();
+  const sortedQuestions = sortQuestionsAlphabetically(questions);
 
   const fetchQuestions = async () => {
     setLoading(true);
@@ -110,22 +112,22 @@ export default function AdminDashboard() {
                    <span className="text-sm text-slate-500 dark:text-slate-400 whitespace-nowrap">{t('admin.selectThenExport')}</span>
                  )}
                  <div className="flex flex-col sm:flex-row gap-2 w-full sm:w-auto sm:items-center sm:justify-end">
-                   <button disabled={selectedIds.length === 0} onClick={async () => { const sel = questions.filter(q => selectedIds.includes(q.id!)); await copyToClipboardPlainText(sel, i18n.language); alert(t('admin.copySuccess')); }} className="w-full sm:w-auto px-3 py-2 text-sm bg-slate-100 dark:bg-slate-800 rounded-md hover:bg-slate-200 disabled:opacity-50">
+                   <button disabled={selectedIds.length === 0} onClick={async () => { const sel = sortedQuestions.filter(q => selectedIds.includes(q.id!)); await copyToClipboardPlainText(sel, i18n.language); alert(t('admin.copySuccess')); }} className="w-full sm:w-auto px-3 py-2 text-sm bg-slate-100 dark:bg-slate-800 rounded-md hover:bg-slate-200 disabled:opacity-50">
                     {t('admin.copyForWord')}
                    </button>
-                   <button disabled={selectedIds.length === 0} onClick={async () => { const sel = questions.filter(q => selectedIds.includes(q.id!)); await exportQuestionsDocx(sel, i18n.language); }} className="hidden sm:inline-flex w-full sm:w-auto px-3 py-2 text-sm bg-indigo-600 text-white rounded-md hover:bg-indigo-700 disabled:opacity-50">
+                   <button disabled={selectedIds.length === 0} onClick={async () => { const sel = sortedQuestions.filter(q => selectedIds.includes(q.id!)); await exportQuestionsDocx(sel, i18n.language); }} className="hidden sm:inline-flex w-full sm:w-auto px-3 py-2 text-sm bg-indigo-600 text-white rounded-md hover:bg-indigo-700 disabled:opacity-50">
                      {t('admin.exportDocx')}
                    </button>
-                   <button disabled={selectedIds.length === 0} onClick={() => { const sel = questions.filter(q => selectedIds.includes(q.id!)); downloadMarkdownFile(sel, i18n.language); }} className="w-full sm:w-auto px-3 py-2 text-sm bg-slate-50 dark:bg-slate-800 rounded-md hover:bg-slate-100 disabled:opacity-50">
+                   <button disabled={selectedIds.length === 0} onClick={() => { const sel = sortedQuestions.filter(q => selectedIds.includes(q.id!)); downloadMarkdownFile(sel, i18n.language); }} className="w-full sm:w-auto px-3 py-2 text-sm bg-slate-50 dark:bg-slate-800 rounded-md hover:bg-slate-100 disabled:opacity-50">
                      {t('admin.exportMd')}
                    </button>
                  </div>
                </div>
 
                <div className="md:hidden px-2 sm:px-3 pb-3 space-y-3">
-                 {questions.length === 0 ? (
+                 {sortedQuestions.length === 0 ? (
                    <div className="p-6 text-center text-slate-400 bg-slate-50 dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800">{t('admin.noQuestions')}</div>
-                 ) : questions.map(q => {
+                 ) : sortedQuestions.map(q => {
                    const isSelected = selectedIds.includes(q.id!);
                    return (
                      <div key={q.id} className={`rounded-2xl border p-4 shadow-sm transition-colors ${isSelected ? 'border-indigo-300 dark:border-indigo-700 bg-indigo-50/60 dark:bg-indigo-950/30' : 'border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900'}`}>
@@ -173,9 +175,9 @@ export default function AdminDashboard() {
                      </tr>
                    </thead>
                    <tbody>
-                     {questions.length === 0 ? (
+                     {sortedQuestions.length === 0 ? (
                        <tr><td colSpan={5} className="p-8 text-center text-slate-400">{t('admin.noQuestions')}</td></tr>
-                     ) : questions.map(q => (
+                     ) : sortedQuestions.map(q => (
                        <tr key={q.id} className="bg-white dark:bg-slate-900 border-b hover:bg-slate-50 dark:hover:bg-slate-800/50 transition border-slate-100 dark:border-slate-800 last:border-0">
                          <td className="px-4 sm:px-6 py-4">
                            <input type="checkbox" checked={selectedIds.includes(q.id!)} onChange={e => {

@@ -1,6 +1,7 @@
 import { collection, writeBatch, doc, getDocs, limit, query, deleteDoc, updateDoc } from 'firebase/firestore';
 import { db } from './firebase';
 import type { Question } from '../features/parser/QuestionParser';
+import { sortQuestionsAlphabetically } from '../utils/questionSort';
 
 const QUESTIONS_COLLECTION = 'questions';
 
@@ -45,8 +46,8 @@ export const getAllQuestions = async (): Promise<Question[]> => {
     const data = doc.data() as Question;
     allQs.push({ ...data, id: doc.id });
   });
-  
-  return allQs;
+
+  return sortQuestionsAlphabetically(allQs);
 };
 
 export const deleteQuestion = async (id: string) => {
