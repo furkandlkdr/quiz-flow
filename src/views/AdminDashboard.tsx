@@ -113,7 +113,7 @@ export default function AdminDashboard() {
                    <button disabled={selectedIds.length === 0} onClick={async () => { const sel = questions.filter(q => selectedIds.includes(q.id!)); await copyToClipboardPlainText(sel, i18n.language); alert(t('admin.copySuccess')); }} className="w-full sm:w-auto px-3 py-2 text-sm bg-slate-100 dark:bg-slate-800 rounded-md hover:bg-slate-200 disabled:opacity-50">
                     {t('admin.copyForWord')}
                    </button>
-                   <button disabled={selectedIds.length === 0} onClick={async () => { const sel = questions.filter(q => selectedIds.includes(q.id!)); await exportQuestionsDocx(sel, i18n.language); }} className="w-full sm:w-auto px-3 py-2 text-sm bg-indigo-600 text-white rounded-md hover:bg-indigo-700 disabled:opacity-50">
+                   <button disabled={selectedIds.length === 0} onClick={async () => { const sel = questions.filter(q => selectedIds.includes(q.id!)); await exportQuestionsDocx(sel, i18n.language); }} className="hidden sm:inline-flex w-full sm:w-auto px-3 py-2 text-sm bg-indigo-600 text-white rounded-md hover:bg-indigo-700 disabled:opacity-50">
                      {t('admin.exportDocx')}
                    </button>
                    <button disabled={selectedIds.length === 0} onClick={() => { const sel = questions.filter(q => selectedIds.includes(q.id!)); downloadMarkdownFile(sel, i18n.language); }} className="w-full sm:w-auto px-3 py-2 text-sm bg-slate-50 dark:bg-slate-800 rounded-md hover:bg-slate-100 disabled:opacity-50">
@@ -130,20 +130,20 @@ export default function AdminDashboard() {
                    return (
                      <div key={q.id} className={`rounded-2xl border p-4 shadow-sm transition-colors ${isSelected ? 'border-indigo-300 dark:border-indigo-700 bg-indigo-50/60 dark:bg-indigo-950/30' : 'border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900'}`}>
                        <div className="flex items-start justify-between gap-3 mb-3">
-                         <label className="flex items-center gap-3 min-w-0">
+                         <label className="flex items-center gap-3 min-w-0 flex-1">
                            <input type="checkbox" checked={isSelected} onChange={e => {
                              if (e.target.checked) setSelectedIds(s => [...s, q.id!]); else setSelectedIds(s => s.filter(id => id !== q.id));
                            }} />
                            <span className="bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 px-2 py-1 rounded text-xs font-medium whitespace-nowrap">{q.topic || getDefaultTopicLabel(i18n.language)}</span>
                          </label>
-                         <div className="flex gap-2 shrink-0">
-                           <button onClick={() => setEditingQuestion(q)} className="text-indigo-600 dark:text-indigo-400 bg-indigo-50 dark:bg-indigo-900/20 p-2 rounded-lg transition" title={t('admin.editQuestion')}>
-                             <Edit3 className="w-4 h-4" />
-                           </button>
-                           <button onClick={() => handleDelete(q.id!)} className="text-red-500 bg-red-50 dark:bg-red-900/20 p-2 rounded-lg transition" title="Delete">
-                             <Trash2 className="w-4 h-4" />
-                           </button>
-                         </div>
+                       </div>
+                       <div className="flex justify-end gap-2 mb-3">
+                         <button onClick={() => setEditingQuestion(q)} className="text-indigo-600 dark:text-indigo-400 bg-indigo-50 dark:bg-indigo-900/20 p-2 rounded-lg transition" title={t('admin.editQuestion')}>
+                           <Edit3 className="w-4 h-4" />
+                         </button>
+                         <button onClick={() => handleDelete(q.id!)} className="text-red-500 bg-red-50 dark:bg-red-900/20 p-2 rounded-lg transition" title="Delete">
+                           <Trash2 className="w-4 h-4" />
+                         </button>
                        </div>
                        <div className="text-sm font-medium text-slate-800 dark:text-slate-200 whitespace-normal break-words leading-relaxed mb-3">
                          {q.text}
